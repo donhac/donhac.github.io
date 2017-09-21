@@ -112,7 +112,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://owmmis3gj.bkt.clouddn.com/WX20170921-191521@2x.png">
 <meta property="og:image" content="http://owmmis3gj.bkt.clouddn.com/WX20170921-195901@2x.png">
-<meta property="og:updated_time" content="2017-09-21T12:32:01.000Z">
+<meta property="og:updated_time" content="2017-09-21T12:36:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 7搭建ngrok服务器">
 <meta name="twitter:description" content="CentOS 7搭建ngrok服务器,实现内网穿透，通过外网访问本地服务。">
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  585 字
+                  615 字
                 </span>
               
 
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2 分钟
+                  3 分钟
                 </span>
               
             </div>
@@ -421,19 +421,19 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/go/src</div><div class="line">GOOS=darwin GOARCH=amd64 ./make.bash</div></pre></td></tr></table></figure>
 <p>这里会报如下错误：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span>#### Building Go bootstrap tool.</div><div class="line">cmd/dist</div><div class="line">ERROR: Cannot find /root/go1.4/bin/go.</div><div class="line">Set $GOROOT_BOOTSTRAP to a working Go tree &gt;= Go 1.4.</div></pre></td></tr></table></figure>
-<p>搜了下网上说是Go高版本的编译过程需要Go1.4的二进制来实现引导(bootstrap)，简单来说就是：Go需要Go自身来编译。<br>所以这里继续安装Go1.4版本。</p>
+<p>搜了下网上说是Go高版本的编译过程需要Go1.4的二进制来实现引导(bootstrap)，简单来说就是：Go需要Go自身来编译。<br>所以这里需要先安装Go1.4版本，这里我们在已经安装了1.8版本的基础上继续安装。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">wget https://storage.googleapis.com/golang/go1.4.3.linux-amd64.tar.gz</div><div class="line">tar -C /root/ -xvf go1.4.3.linux-amd64.tar.gz</div><div class="line">mv /root/go/ /root/go1.4</div><div class="line">cd /root/go1.4/src</div><div class="line">./all.bash</div></pre></td></tr></table></figure>
 <p>继续重新编译mac客户端：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/go/src</div><div class="line">GOOS=darwin GOARCH=amd64 ./make.bash</div><div class="line">cd /usr/local/src/ngrok</div><div class="line">GOOS=darwin GOARCH=amd64 make release-client</div></pre></td></tr></table></figure>
 <p>完了后在<code>/usr/local/src/ngrok/bin/darwin_amd64/</code>下可以看到生成了一个ngrok文件，将它拷贝到mac上。</p>
-<p>到这里，mac客户端的编译也完成了，后面将应用跑起来跟windows基本是一样的了。<br>新建ngrok文件夹，将前面生成的ngrok文件放到该文件夹，新建名为``的文件，配置如下：</p>
+<p>到这里，mac客户端的编译也完成了，后面将应用跑起来跟windows基本是一样的了。<br>新建ngrok文件夹，将前面生成的ngrok文件放到该文件夹，新建名为<code>ngrok.cfg</code>的文件，配置如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">server_addr: &quot;ngrok.donhac.top:8083&quot;</div><div class="line">trust_host_root_certs: false</div></pre></td></tr></table></figure>
 <p>执行以下命令启动:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./ngrok -config=./ngrok.cfg -subdomain=test 8080</div></pre></td></tr></table></figure>
 <p>启动成功。</p>
 <p><img src="http://owmmis3gj.bkt.clouddn.com/WX20170921-195901@2x.png" alt=""></p>
 <p>这里如果不指定<code>-subdomain=test</code>的话会生成一个随机前缀的域名。</p>
-<font color="#FF0000">注：服务端启动后如果关闭远程连接服务端也会被杀掉断开，这里可以设置服务端后台运行：<br></font>
+<font color="#FF0000">注：服务端启动后如果关闭远程连接服务端后台也会被杀掉断开，这里可以设置服务端的服务后台运行：<br></font>
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/src/ngrok</div><div class="line">setsid ./bin/ngrokd -tlsKey="assets/server/tls/snakeoil.key" -tlsCrt="assets/server/tls/snakeoil.crt" -domain="ngrok.donhac.top"  -httpAddr=":8081" -httpsAddr=":8082" -tunnelAddr=":8083"</div></pre></td></tr></table></figure>
 <h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul>
@@ -654,7 +654,7 @@
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
     <span title="Site words total count">
-      899
+      929
     </span>
   
 </div>
